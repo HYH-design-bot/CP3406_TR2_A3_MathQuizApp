@@ -55,4 +55,19 @@ dependencies {
     androidTestImplementation(libs.androidx.junit)
     debugImplementation(libs.androidx.compose.ui.test.manifest)
     debugImplementation(libs.androidx.compose.ui.tooling)
+
+    //Added Dependencies
+    //Navigation Component
+    implementation("androidx.navigation:navigation-compose:2.8.5")
+
+    //Retrofit Networking
+    implementation("com.squareup.retrofit2:retrofit:2.11.0")
+    implementation("com.squareup.retrofit2:converter-gson:2.11.0")
+
+    //Room Database
+    implementation("androidx.room:room-runtime:2.6.1")
+    implementation("androidx.room:room-ktx:2.6.1")
+
+    //Room compilation
+    annotationProcessor("androidx.room:room-compiler:2.6.1")
 }
