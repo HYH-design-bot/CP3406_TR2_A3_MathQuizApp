@@ -10,3 +10,10 @@ data class QuizResult(
     val correctAnswers: Int,
     val timestamp: Long = System.currentTimeMillis()
 )
+
+@Entity(tableName = "app_settings")
+data class AppSettings(
+    @PrimaryKey val id: Int = 1, // Only ever save 1 row of settings
+    val isHighContrast: Boolean = false,
+    val difficulty: String = "Easy"
+)

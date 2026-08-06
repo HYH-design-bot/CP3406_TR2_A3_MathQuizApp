@@ -10,12 +10,19 @@ import androidx.navigation.NavController
 import androidx.compose.runtime.*
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
+import com.example.mathquizapp.data.AppSettings
+import com.example.mathquizapp.data.QuizDao
+import kotlinx.coroutines.launch
 
 @Composable
-fun SettingsScreen(navController: NavController) {
-    // Variables
-    var isHighContrastEnabled by remember { mutableStateOf(false) }
-    var selectedDifficulty by remember { mutableStateOf("Easy") }
+fun SettingsScreen(navController: NavController, quizDao: QuizDao) {
+    val coroutineScope = rememberCoroutineScope()
+
+    // Persistent Setting
+    val savedSettings by quizDao.getSettings().collectAsState(initial = AppSettings())
+
+    // Fallback Protection
+    val currentSettings = savedSettings ?: AppSettings()
 
     Column(
         modifier = Modifier
@@ -60,8 +67,12 @@ fun SettingsScreen(navController: NavController) {
                         )
                     }
                     Switch(
-                        checked = isHighContrastEnabled,
-                        onCheckedChange = { isHighContrastEnabled = it }
+                        checked = currentSettings.isHighContrast,
+                        onCheckedChange = { isChecked ->
+                            coroutineScope.launch {
+                                quizDao.saveSettings(currentSettings.copy(isHighContrast = isChecked))
+                            }
+                        }
                     )
                 }
             }
@@ -81,12 +92,16 @@ fun SettingsScreen(navController: NavController) {
             ) {
                 val difficulties = listOf("Easy", "Medium", "Hard")
                 difficulties.forEach { level ->
-                    val isSelected = selectedDifficulty == level
+                    val isSelected = currentSettings.difficulty == level
                     ElevatedButton(
-                        onClick = { selectedDifficulty = level },
+                        onClick = {
+                            coroutineScope.launch {
+                                quizDao.saveSettings(currentSettings.copy(difficulty = level))
+                            }
+                        },
                         modifier = Modifier
                             .weight(1f)
-                            .heightIn(min = 52.dp), // Accessibility Target: >48dp
+                            .heightIn(min = 52.dp),
                         colors = ButtonDefaults.elevatedButtonColors(
                             containerColor = if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surface,
                             contentColor = if (isSelected) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.primary

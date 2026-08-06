@@ -27,7 +27,7 @@ fun AppNavGraph(
             com.example.mathquizapp.ui.QuizScreen(navController, quizDao)
         }
         composable(Screen.Settings.route) {
-            com.example.mathquizapp.ui.SettingsScreen(navController)
+            com.example.mathquizapp.ui.SettingsScreen(navController, quizDao)
         }
         composable(Screen.Statistics.route) {
             com.example.mathquizapp.ui.StatisticsScreen(navController, quizDao)
