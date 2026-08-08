@@ -28,7 +28,9 @@ fun LandingScreen(navController: NavController, apiService: MathApiService) {
     LaunchedEffect(Unit) {
         coroutineScope.launch {
             try {
-                val response = apiService.getRandomMathFact()
+                // Pick a random fact
+                val randomSeed = kotlin.random.Random.nextInt(1, 100)
+                val response = apiService.getRandomMathFact(randomSeed)
                 if (response.found) {
                     mathFact = response.factText
                 }

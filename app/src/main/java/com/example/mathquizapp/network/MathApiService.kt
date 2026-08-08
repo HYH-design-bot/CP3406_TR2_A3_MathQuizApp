@@ -4,11 +4,12 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.GET
 import retrofit2.http.Headers
+import retrofit2.http.Path
 
 interface MathApiService {
     @Headers("Content-Type: application/json")
-    @GET("random/math?json")
-    suspend fun getRandomMathFact(): MathFactResponse
+    @GET("{number}/math?json")
+    suspend fun getRandomMathFact(@Path("number") number: Int): MathFactResponse
 
     companion object {
         private const val BASE_URL = "https://numbersapi.com"
