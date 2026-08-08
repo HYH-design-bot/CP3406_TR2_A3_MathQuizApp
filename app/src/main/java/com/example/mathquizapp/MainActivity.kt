@@ -16,7 +16,6 @@ import androidx.navigation.compose.rememberNavController
 import com.example.mathquizapp.data.AppDatabase
 import com.example.mathquizapp.navigation.AppNavGraph
 import com.example.mathquizapp.network.MathApiService
-import com.example.mathquizapp.ui.theme.MathQuizAppTheme
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {

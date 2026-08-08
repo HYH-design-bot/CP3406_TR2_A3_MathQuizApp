@@ -7,12 +7,11 @@ import retrofit2.http.Headers
 import retrofit2.http.Path
 
 interface MathApiService {
-    @Headers("Content-Type: application/json")
-    @GET("{number}/math?json")
-    suspend fun getRandomMathFact(@Path("number") number: Int): MathFactResponse
+    @GET("/jokes/random?category=nerdy")
+    suspend fun getRandomMathFact(): MathFactResponse
 
     companion object {
-        private const val BASE_URL = "https://numbersapi.com"
+        private const val BASE_URL = "https://api.chucknorris.io"
 
         fun create(): MathApiService {
             return Retrofit.Builder()

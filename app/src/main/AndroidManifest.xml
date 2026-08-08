@@ -11,7 +11,9 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.MathQuizApp">
+        android:theme="@style/Theme.MathQuizApp"
+        android:usesCleartextTraffic="true"> <!-- Added to allow unencrypted HTTP traffic to numbersapi.com -->
+
         <activity
             android:name=".MainActivity"
             android:exported="true"

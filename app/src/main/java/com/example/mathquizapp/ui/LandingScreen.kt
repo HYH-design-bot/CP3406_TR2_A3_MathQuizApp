@@ -17,26 +17,22 @@ import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextAlign
 import kotlinx.coroutines.launch
+
 @Composable
 fun LandingScreen(navController: NavController, apiService: MathApiService) {
-    val coroutineScope = rememberCoroutineScope()
-
     // UI state holder to hold the online math fact
     var mathFact by remember { mutableStateOf("Loading interesting math trivia fact...") }
 
     // Fetch the math fact when the screen loads
     LaunchedEffect(Unit) {
-        coroutineScope.launch {
-            try {
-                // Pick a random fact
-                val randomSeed = kotlin.random.Random.nextInt(1, 100)
-                val response = apiService.getRandomMathFact(randomSeed)
-                if (response.found) {
-                    mathFact = response.factText
-                }
-            } catch (e: Exception) {
-                mathFact = "Welcome! Ready to exercise your brain with some quick math quiz problems today?"
-            }
+        try {
+            // Pick a random fact
+            val dynamicSeedNumber = (1..200).random()
+            val response = apiService.getRandomMathFact()
+            mathFact = response.factText
+        } catch (e: Exception) {
+            e.printStackTrace()
+            mathFact = "Welcome! Ready to exercise your brain with some quick math quiz problems today?"
         }
     }
 
