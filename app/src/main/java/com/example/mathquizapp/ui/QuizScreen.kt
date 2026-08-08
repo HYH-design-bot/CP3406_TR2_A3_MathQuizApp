@@ -14,24 +14,26 @@ import androidx.compose.ui.semantics.semantics
 import com.example.mathquizapp.data.QuizResult
 import kotlinx.coroutines.launch
 import kotlin.random.Random
+import com.example.mathquizapp.data.AppSettings
 
 @Composable
 fun QuizScreen(navController: NavController, quizDao: QuizDao) {
     val coroutineScope = rememberCoroutineScope()
 
-    // Read the difficulty adjustment
-    val savedSettings by quizDao.getSettings().collectAsState(initial = null)
-    val difficulty = savedSettings?.difficulty ?: "Easy"
+    // 💡 Step A: Observe your stored user settings configurations live from the DB layer rows
+    val settingsState by quizDao.getSettings().collectAsState(initial = AppSettings())
+    val activeDifficulty = settingsState?.difficulty ?: "Easy"
 
-    // Set the random value matching difficulty settings
-    val maxRange = when (difficulty) {
+    // 💡 Step B: Dynamically shift the equation upper bound variable range matching their selection
+    val numericRangeBoundary = when (activeDifficulty) {
         "Medium" -> 50
         "Hard" -> 100
         else -> 10 // Easy
     }
 
-    var num1 by remember { mutableStateOf(kotlin.random.Random.nextInt(1, maxRange)) }
-    var num2 by remember { mutableStateOf(kotlin.random.Random.nextInt(1, maxRange)) }
+    // 💡 Step C: Passing numericRangeBoundary into remember keys triggers recalculation when options change
+    var num1 by remember(numericRangeBoundary) { mutableStateOf(Random.nextInt(1, numericRangeBoundary)) }
+    var num2 by remember(numericRangeBoundary) { mutableStateOf(Random.nextInt(1, numericRangeBoundary)) }
     var currentQuestion by remember { mutableStateOf(1) }
     var score by remember { mutableStateOf(0) }
     var isQuizFinished by remember { mutableStateOf(false) }
@@ -50,7 +52,7 @@ fun QuizScreen(navController: NavController, quizDao: QuizDao) {
         if (!isQuizFinished) {
             // Header Tracker
             Text(
-                text = "Question $currentQuestion of 5",
+                text = "Question $currentQuestion of 5 ($activeDifficulty Mode)",
                 style = MaterialTheme.typography.titleMedium,
                 modifier = Modifier.semantics { contentDescription = "Progress: Question $currentQuestion of 5" }
             )
@@ -77,8 +79,8 @@ fun QuizScreen(navController: NavController, quizDao: QuizDao) {
 
                             // Progress loop check
                             if (currentQuestion < 5) {
-                                num1 = Random.nextInt(1, 10)
-                                num2 = Random.nextInt(1, 10)
+                                num1 = Random.nextInt(1, numericRangeBoundary)
+                                num2 = Random.nextInt(1, numericRangeBoundary)
                                 currentQuestion++
                             } else {
                                 isQuizFinished = true
