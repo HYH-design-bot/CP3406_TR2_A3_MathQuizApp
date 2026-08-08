@@ -10,6 +10,23 @@ import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.ui.graphics.Color
+import com.example.mathquizapp.data.AppDatabase
+import com.example.mathquizapp.data.AppSettings
+import androidx.compose.runtime.remember
+
+private val HighContrastColorScheme = lightColorScheme(
+    primary = Color.Black,
+    onPrimary = Color.White,
+    primaryContainer = Color(0xFFE0E0E0),
+    onPrimaryContainer = Color.Black,
+    surfaceVariant = Color(0xFFCCCCCC),
+    onSurfaceVariant = Color.Black,
+    background = Color.White,
+    onBackground = Color.Black
+)
 
 private val DarkColorScheme = darkColorScheme(
     primary = Purple80,
@@ -21,31 +38,27 @@ private val LightColorScheme = lightColorScheme(
     primary = Purple40,
     secondary = PurpleGrey40,
     tertiary = Pink40
-
-    /* Other default colors to override
-    background = Color(0xFFFFFBFE),
-    surface = Color(0xFFFFFBFE),
-    onPrimary = Color.White,
-    onSecondary = Color.White,
-    onTertiary = Color.White,
-    onBackground = Color(0xFF1C1B1F),
-    onSurface = Color(0xFF1C1B1F),
-    */
 )
 
 @Composable
 fun MathQuizAppTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
-    // Dynamic color is available on Android 12+
     dynamicColor: Boolean = true,
     content: @Composable () -> Unit
 ) {
+    val context = LocalContext.current
+
+    // Connect directly to the database stream to trace adjustments live
+    val database = remember { AppDatabase.getDatabase(context) }
+    val savedSettings by database.quizDao().getSettings().collectAsState(initial = AppSettings())
+    val isHighContrast = savedSettings?.isHighContrast ?: false
+
     val colorScheme = when {
+        // Switch to the monochrome high-contrast template if enabled in settings
+        isHighContrast -> HighContrastColorScheme
         dynamicColor && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> {
-            val context = LocalContext.current
             if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
         }
-
         darkTheme -> DarkColorScheme
         else -> LightColorScheme
     }
