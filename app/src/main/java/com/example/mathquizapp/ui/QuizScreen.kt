@@ -19,9 +19,19 @@ import kotlin.random.Random
 fun QuizScreen(navController: NavController, quizDao: QuizDao) {
     val coroutineScope = rememberCoroutineScope()
 
-    // Gameplay progression
-    var num1 by remember { mutableStateOf(Random.nextInt(1, 10)) }
-    var num2 by remember { mutableStateOf(Random.nextInt(1, 10)) }
+    // Read the difficulty adjustment
+    val savedSettings by quizDao.getSettings().collectAsState(initial = null)
+    val difficulty = savedSettings?.difficulty ?: "Easy"
+
+    // Set the random value matching difficulty settings
+    val maxRange = when (difficulty) {
+        "Medium" -> 50
+        "Hard" -> 100
+        else -> 10 // Easy
+    }
+
+    var num1 by remember { mutableStateOf(kotlin.random.Random.nextInt(1, maxRange)) }
+    var num2 by remember { mutableStateOf(kotlin.random.Random.nextInt(1, maxRange)) }
     var currentQuestion by remember { mutableStateOf(1) }
     var score by remember { mutableStateOf(0) }
     var isQuizFinished by remember { mutableStateOf(false) }
